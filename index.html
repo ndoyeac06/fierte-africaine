@@ -1,0 +1,193 @@
+!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fierté Africaine</title>
+
+<!-- jsPDF pour la facture PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+:root{--marron:#6b3e26;--beige:#f5f0e6}
+body{margin:0;font-family:Segoe UI,Arial;background:var(--beige)}
+header{background:var(--marron);padding:12px 25px;display:flex;justify-content:space-between;align-items:center}
+.logo{display:flex;align-items:center;gap:12px;color:var(--beige)}
+.logo img{width:55px;height:55px;border-radius:50%;background:var(--beige);padding:5px}
+nav a{color:var(--beige);margin-left:20px;text-decoration:none;font-weight:bold}
+section{display:none;padding:40px;max-width:1100px;margin:auto}
+section.active{display:block}
+h1,h2{color:var(--marron)}
+.produits{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:25px;margin-bottom:30px}
+.produit{background:white;border-radius:18px;padding:15px;text-align:center;box-shadow:0 8px 20px rgba(0,0,0,.08);cursor:pointer;transition:0.3s}
+.produit:hover{transform:scale(1.03)}
+.produit img{width:100%;height:220px;object-fit:cover;border-radius:15px}
+.prix{font-weight:bold;color:var(--marron);margin-top:8px}
+form{background:white;padding:25px;border-radius:18px;max-width:500px}
+input,select,textarea,button{width:100%;padding:12px;margin-bottom:12px;border-radius:8px;border:1px solid #ccc}
+button{background:var(--marron);color:white;font-weight:bold;border:none;cursor:pointer}
+.whatsapp{position:fixed;bottom:20px;right:20px;background:#25D366;color:white;padding:12px 20px;border-radius:30px;text-decoration:none;font-weight:bold}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">
+    <img src="logo.png">
+    <span>Fierté Africaine</span>
+  </div>
+  <nav>
+    <a onclick="show('home')">Accueil</a>
+    <a onclick="show('shop')">Boutique</a>
+  </nav>
+</header>
+
+<!-- ===== ACCUEIL ===== -->
+<section id="home" class="active">
+  <h1>Bienvenue chez Fierté Africaine</h1>
+  <p>La mode qui célèbre l’identité africaine.</p>
+  <div class="photos">
+    <div class="produit"><img src="tee-shirt.jpg" alt="Présentation"></div>
+    <div class="produit"><img src="pull.jpg" alt="Présentation"></div>
+  </div>
+</section>
+
+<!-- ===== BOUTIQUE ===== -->
+<section id="shop">
+<h2>Boutique en ligne</h2>
+
+<div class="produits">
+
+  <div class="produit" onclick="selectProduit('Tee-shirt',5000)">
+    <img src="tee-shirt.jpg" alt="Tee-shirt">
+    <h3>Tee-shirt Fierté Africaine</h3>
+    <p class="prix">8 000 FCFA</p>
+  </div>
+
+  <div class="produit" onclick="selectProduit('Pull',10000)">
+    <img src="pull.jpg" alt="Pull">
+    <h3>Pull Fierté Africaine</h3>
+    <p class="prix">8 000 FCFA</p>
+  </div>
+
+</div>
+
+<form id="commandeForm">
+  <input id="nom" placeholder="Nom complet" required>
+  <input id="telephone" placeholder="Téléphone" required>
+
+  <input id="produit" readonly placeholder="Produit choisi">
+  <input id="prix" readonly placeholder="Prix">
+
+  <select id="taille">
+    <option>S</option><option>M</option><option>L</option><option>XL</option>
+  </select>
+
+  <input id="couleur" placeholder="Couleur">
+  <input type="number" id="quantite" value="1" min="1" onchange="calcTotal()">
+
+  <p><b>Total : <span id="total">0</span> FCFA</b></p>
+
+  <select id="paiement">
+    <option>Wave</option>
+    <option>Orange Money</option>
+  </select>
+
+  <button type="button" onclick="payer()">Payer maintenant</button>
+  <button type="submit">Valider la commande</button>
+  <button type="button" onclick="telechargerFacture()">Télécharger la facture PDF</button>
+
+  <p id="resultat"></p>
+</form>
+</section>
+
+<footer style="text-align:center;padding:20px;background:#6b3e26;color:#f5f0e6">
+© 2026 Fierté Africaine
+</footer>
+
+<a class="whatsapp" href="https://wa.me/221783000823" target="_blank">WhatsApp</a>
+
+<script>
+let prixUnitaire = 0;
+
+function show(id){
+  document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+function selectProduit(nom, prix){
+  produit.value = nom;
+  prixUnitaire = prix;
+  prix.value = prix + " FCFA";
+  calcTotal();
+}
+
+function calcTotal(){
+  total.innerText = prixUnitaire * quantite.value;
+}
+
+function payer(){
+  let montant = total.innerText;
+  let msg = `Paiement ${produit.value} - ${montant} FCFA`;
+
+  if(paiement.value === "Wave"){
+    window.open(`https://pay.wave.com/SHOP_NAME?amount=${montant}&message=${msg}`);
+  } else {
+    window.open(`https://orange-money.sn/paiement`);
+  }
+}
+
+// Envoi commande vers Google Sheet
+const scriptURL = "https://script.google.com/macros/s/AKfycbzfUECnB0Dm1VqwHtRYaDFTXKOFEj01TEmeRt1Br56X8viA0GBHfefhDfzvoeWBDBfE/exec";
+commandeForm.addEventListener("submit", e=>{
+  e.preventDefault();
+  fetch(scriptURL,{
+    method:"POST",
+    body:JSON.stringify({
+      nom:nom.value,
+      telephone:telephone.value,
+      produit:produit.value,
+      taille:taille.value,
+      couleur:couleur.value,
+      quantite:+quantite.value,
+      total:total.innerText,
+      paiement:paiement.value
+    })
+  }).then(()=>{
+    resultat.innerText="Commande enregistrée ✔️";
+    commandeForm.reset();
+    total.innerText = "0";
+  });
+});
+
+// Génération de facture PDF
+function telechargerFacture(){
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  doc.setFontSize(18);
+  doc.text("FIERTE AFRICAINE", 105, 20, {align:"center"});
+  doc.setFontSize(14);
+  doc.text("Facture de commande", 105, 30, {align:"center"});
+  doc.setLineWidth(0.5);
+  doc.line(20,35,190,35);
+
+  let y = 45;
+  doc.setFontSize(12);
+  doc.text(`Nom : ${nom.value}`, 20, y); y+=8;
+  doc.text(`Téléphone : ${telephone.value}`, 20, y); y+=8;
+  doc.text(`Produit : ${produit.value}`, 20, y); y+=8;
+  doc.text(`Taille : ${taille.value}`, 20, y); y+=8;
+  doc.text(`Couleur : ${couleur.value}`, 20, y); y+=8;
+  doc.text(`Quantité : ${quantite.value}`, 20, y); y+=8;
+  doc.text(`Total : ${total.innerText} FCFA`, 20, y); y+=8;
+  doc.text(`Mode de paiement : ${paiement.value}`, 20, y); y+=8;
+
+  doc.line(20,y+2,190,y+2);
+  doc.text("Merci pour votre commande !", 105, y+12, {align:"center"});
+  doc.save(`Facture_${nom.value}_${produit.value}.pdf`);
+}
+</script>
+
+</body>
+</html>
