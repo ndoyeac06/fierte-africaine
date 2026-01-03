@@ -5,62 +5,189 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Fierté Africaine</title>
 
-<!-- jsPDF pour la facture PDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
-:root{--marron:#6b3e26;--beige:#f5f0e6}
+:root{--marron:#6b3e26;--beige:#f5f0e6;--marron-fonce:#4a2a1a}
 body{margin:0;font-family:Segoe UI,Arial;background:var(--beige)}
-header{background:var(--marron);padding:12px 25px;display:flex;justify-content:space-between;align-items:center;position:fixed;width:100%;top:0;z-index:100}
+
+header{
+  background:var(--marron);
+  padding:12px 25px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:fixed;
+  width:100%;
+  top:0;
+  z-index:100
+}
 .logo{display:flex;align-items:center;gap:12px;color:var(--beige)}
 .logo img{width:55px;height:55px;border-radius:50%;background:var(--beige);padding:5px}
 nav a{color:var(--beige);margin-left:20px;text-decoration:none;font-weight:bold;cursor:pointer}
-section{display:none;padding:100px 20px 40px;max-width:1100px;margin:auto} /* padding-top = header */
-section.active{display:block}
-h1,h2{color:var(--marron)}
-form{background:white;padding:25px;border-radius:18px;max-width:500px;margin-top:30px}
-input,select,textarea,button{width:100%;padding:12px;margin-bottom:12px;border-radius:8px;border:1px solid #ccc}
-button{background:var(--marron);color:white;font-weight:bold;border:none;cursor:pointer}
-.whatsapp{position:fixed;bottom:20px;right:20px;background:#25D366;color:white;padding:12px 20px;border-radius:30px;text-decoration:none;font-weight:bold}
 
-/* ===== Page bienvenue ===== */
+/* SECTIONS */
+section{
+  display:none;
+  padding:100px 20px 80px;
+  max-width:1100px;
+  margin:auto;
+  opacity:0;
+  transform:translateY(20px);
+  transition:0.8s;
+}
+section.active{display:block;opacity:1;transform:translateY(0)}
+
+h1,h2{color:var(--marron)}
+
+form{
+  background:white;
+  padding:25px;
+  border-radius:18px;
+  max-width:500px;
+  margin-top:30px
+}
+input,select,button{
+  width:100%;
+  padding:12px;
+  margin-bottom:12px;
+  border-radius:8px;
+  border:1px solid #ccc
+}
+button{
+  background:var(--marron);
+  color:white;
+  font-weight:bold;
+  border:none;
+  cursor:pointer
+}
+button:disabled{background:#aaa}
+
+.whatsapp{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  background:#25D366;
+  color:white;
+  padding:12px 20px;
+  border-radius:30px;
+  text-decoration:none;
+  font-weight:bold
+}
+
+/* BIENVENUE */
 #welcome{
-  position:fixed;inset:0;background:linear-gradient(135deg,#6b3e26,#8a5a3c);color:white;
-  display:flex;align-items:center;justify-content:center;text-align:center;z-index:9999;
+  position:fixed;
+  inset:0;
+  background:linear-gradient(135deg,#6b3e26,#8a5a3c);
+  display:flex;
+  align-items:center;
+  justify-content:center;
   flex-direction:column;
+  text-align:center;
+  z-index:9999
 }
 #welcome img{
-  width:130px;height:130px;border-radius:50%;background:white;padding:10px;margin-bottom:20px;
-  box-shadow:0 8px 25px rgba(0,0,0,.4);
+  width:130px;height:130px;border-radius:50%;
+  background:white;padding:10px;margin-bottom:20px
+}
+#welcome h1{
+  color:var(--marron-fonce);
+  font-size:38px;
+  font-weight:800
 }
 #welcome button{
-  padding:12px 30px;border:none;border-radius:30px;font-weight:bold;cursor:pointer;background:var(--beige);color:var(--marron);
+  padding:12px 30px;border:none;border-radius:30px;
+  font-weight:bold;cursor:pointer;
+  background:var(--beige);color:var(--marron)
 }
 
-/* ===== Grille images présentation ===== */
+/* PRESENTATION */
 .presentation{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin-top:30px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:20px;
+  margin-top:20px
 }
-.presentation img{width:100%;height:auto;object-fit:contain;border-radius:15px;background:#f5f0e6}
+.presentation img{
+  width:100%;
+  object-fit:contain;
+  border-radius:15px;
+  background:#f5f0e6
+}
+.presentation-text{
+  margin-top:20px;
+  font-size:16px;
+  line-height:1.6;
+}
 
-/* ===== Boutique pro ===== */
+/* PRODUITS */
 .produit-container{
-  border-radius:18px;background:white;padding:15px;box-shadow:0 8px 20px rgba(0,0,0,.08);text-align:center;margin-bottom:30px;
+  border-radius:18px;
+  background:white;
+  padding:15px;
+  box-shadow:0 8px 20px rgba(0,0,0,.08);
+  text-align:center;
+  margin-bottom:30px
 }
-.main-image{width:100%;max-height:350px;object-fit:contain;border-radius:15px;background:#f5f0e6;margin-bottom:10px}
-.thumbnails{display:flex;justify-content:center;gap:10px;overflow-x:auto;padding-bottom:5px}
-.thumbnails img{width:80px;height:80px;object-fit:contain;border-radius:10px;cursor:pointer;transition:0.3s}
-.thumbnails img:hover{transform:scale(1.2);box-shadow:0 8px 20px rgba(0,0,0,0.3)}
+.main-image{
+  width:100%;
+  max-height:350px;
+  object-fit:contain;
+  border-radius:15px;
+  background:#f5f0e6;
+  margin-bottom:10px
+}
+.thumbnails{
+  display:flex;
+  justify-content:center;
+  gap:10px
+}
+.thumbnails img{
+  width:80px;height:80px;
+  object-fit:contain;
+  border-radius:10px;
+  cursor:pointer
+}
+
+/* FOOTER */
+footer{
+  text-align:center;
+  padding:15px;
+  background:var(--marron);
+  color:var(--beige);
+  margin-top:20px;
+}
+
+/* --- Responsive --- */
+@media (max-width:768px){
+  .presentation{grid-template-columns:1fr;gap:15px;}
+  .produits{grid-template-columns:1fr;}
+  .thumbnails{overflow-x:auto;justify-content:flex-start;gap:10px;}
+  .thumbnails img{flex-shrink:0;}
+  section{padding:120px 15px 100px;}
+  form{padding:15px;}
+  #welcome h1{font-size:30px;}
+  #welcome img{width:100px;height:100px;}
+}
+@media (max-width:480px){
+  header{flex-direction:column;align-items:flex-start;padding:10px 15px;}
+  nav a{margin-left:0;margin-top:8px;}
+  .main-image{max-height:250px;}
+  .thumbnails img{width:60px;height:60px;}
+  #welcome h1{font-size:26px;}
+}
 </style>
 </head>
+
 <body>
 
-<!-- ===== Page bienvenue ===== -->
+<!-- BIENVENUE -->
 <div id="welcome">
-  <img src="logo fa.jpeg" alt="Logo Fierté Africaine">
+  <img src="logo fa.jpeg">
   <h1>Fierté Africaine</h1>
-  <p>La mode qui célèbre l’identité africaine</p>
-  <button onclick="document.getElementById('welcome').style.display='none';show('home')">Entrer</button>
+  <p style="color:white">La mode qui célèbre l’identité africaine</p>
+  <button onclick="entrerSite()">Entrer</button>
 </div>
 
 <header>
@@ -74,137 +201,138 @@ button{background:var(--marron);color:white;font-weight:bold;border:none;cursor:
   </nav>
 </header>
 
-<!-- ===== ACCUEIL / Présentation ===== -->
+<!-- ACCUEIL -->
 <section id="home">
   <h1>Bienvenue chez Fierté Africaine</h1>
-  <p>La mode qui célèbre l’identité africaine.</p>
+
+  <p class="presentation-text">
+    Fierté Africaine est une marque engagée qui met en valeur l’identité,
+    la culture et l’élégance africaine à travers des vêtements modernes,
+    authentiques et de qualité.
+  </p>
+
   <div class="presentation">
-    <img src="shooting.jpeg" alt="Présentation 1">
-    <img src="shooting1.jpeg" alt="Présentation 2">
-    <img src="shooting 4.jpeg" alt="Présentation 3">
+    <img src="shooting.jpeg">
+    <img src="shooting1.jpeg">
+    <img src="shooting 4.jpeg">
   </div>
 </section>
 
-<!-- ===== BOUTIQUE ===== -->
+<!-- BOUTIQUE -->
 <section id="shop">
 <h2>Boutique en ligne</h2>
 
-<div class="produits">
+<!-- TEE-SHIRT -->
+<div class="produit-container">
+  <h3>Tee-shirt Fierté Africaine</h3>
+  <img id="main-tee" src="shooting.jpeg" class="main-image">
 
-  <!-- Produit Tee-shirt -->
-  <div class="produit-container">
-    <h3>Tee-shirt Fierté Africaine</h3>
-    <img id="main-tee" src="shooting.jpeg" class="main-image">
-    <div class="thumbnails">
-      <img src="shooting.jpeg" onclick="document.getElementById('main-tee').src=this.src">
-      <img src="shooting1.jpeg" onclick="document.getElementById('main-tee').src=this.src">
-      <img src="shooting 4.jpeg" onclick="document.getElementById('main-tee').src=this.src">
-    </div>
-    <p class="prix">8 000 FCFA</p>
-    <button onclick="selectProduit('Tee-shirt',8000)">Choisir ce produit</button>
+  <div class="thumbnails">
+    <img src="shooting.jpeg" onclick="document.getElementById('main-tee').src=this.src">
+    <img src="shooting1.jpeg" onclick="document.getElementById('main-tee').src=this.src">
+    <img src="shooting 4.jpeg" onclick="document.getElementById('main-tee').src=this.src">
   </div>
 
-  <!-- Produit Pull -->
-  <div class="produit-container">
-    <h3>Pull Fierté Africaine</h3>
-    <img id="main-pull" src="pull marron.jpeg" class="main-image">
-    <div class="thumbnails">
-      <img src="pull marron.jpeg" onclick="document.getElementById('main-pull').src=this.src">
-      <img src="jeune homme.jpeg" onclick="document.getElementById('main-pull').src=this.src">
-      <img src="jeune homme.jpeg" onclick="document.getElementById('main-pull').src=this.src">
-    </div>
-    <p class="prix">8 000 FCFA</p>
-    <button onclick="selectProduit('Pull',8000)">Choisir ce produit</button>
-  </div>
-
+  <p><b>8 000 FCFA</b></p>
+  <button onclick="choisir('Tee-shirt',8000)">Choisir ce produit</button>
 </div>
 
-<!-- Formulaire de commande -->
+<!-- PULL -->
+<div class="produit-container">
+  <h3>Pull Fierté Africaine</h3>
+  <img id="main-pull" src="pull marron.jpeg" class="main-image">
+
+  <div class="thumbnails">
+    <img src="pull marron.jpeg" onclick="document.getElementById('main-pull').src=this.src">
+    <img src="jeune homme.jpeg" onclick="document.getElementById('main-pull').src=this.src">
+    <img src="jeune homme.jpeg" onclick="document.getElementById('main-pull').src=this.src">
+  </div>
+
+  <p><b>12 000 FCFA</b></p>
+  <button onclick="choisir('Pull',12000)">Choisir ce produit</button>
+</div>
+
+<!-- FORMULAIRE COMMANDE -->
 <form id="commandeForm">
   <input id="nom" placeholder="Nom complet" required>
-  <input id="telephone" placeholder="Téléphone" required>
-  <input id="produit" readonly placeholder="Produit choisi">
-  <input id="prix" readonly placeholder="Prix">
-  <select id="taille"><option>S</option><option>M</option><option>L</option><option>XL</option></select>
-  <input id="couleur" placeholder="Couleur">
-  <input type="number" id="quantite" value="1" min="1" onchange="calcTotal()">
+  <input id="tel" placeholder="Téléphone" required>
+  <input id="prod" placeholder="Produit" readonly>
+  <input id="qte" type="number" value="1" min="1" onchange="calcul()">
+
   <p><b>Total : <span id="total">0</span> FCFA</b></p>
-  <select id="paiement"><option>Wave</option><option>Orange Money</option></select>
-  <button type="button" onclick="payer()">Payer maintenant</button>
-  <button type="submit">Valider la commande</button>
-  <button type="button" onclick="telechargerFacture()">Télécharger la facture PDF</button>
+
+  <button type="button" onclick="payerWave()">Payer avec Wave</button>
+  <button type="button" onclick="confirmerPaiement()">J’ai payé (Wave)</button>
+  <button type="button" id="factureBtn" onclick="facture()" disabled>
+    Télécharger la facture
+  </button>
+
   <p id="resultat"></p>
 </form>
 </section>
 
-<footer style="text-align:center;padding:20px;background:#6b3e26;color:#f5f0e6">
-© 2026 Fierté Africaine
-</footer>
-
 <a class="whatsapp" href="https://wa.me/221783000823" target="_blank">WhatsApp</a>
 
-<script>
-let prixUnitaire = 0;
+<footer>
+  © 2026 Fierté Africaine. Tous droits réservés.
+</footer>
 
+<script>
+const WAVE_NUMERO="221783000823";
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbwaYSQmGpcqFlCit1cHKi_OA7EQIT1uapikjmSgzbMYcb5iR4B4XWGLEN9IKu3C-FZW/exec";
+
+let prix=0;
+let paiementOK=false;
+
+function entrerSite(){
+  welcome.style.opacity=0;
+  setTimeout(()=>{welcome.style.display="none";show("home")},800);
+}
 function show(id){
   document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
   document.getElementById(id).classList.add("active");
 }
-
-function selectProduit(nom, prix){
-  produit.value = nom;
-  prixUnitaire = prix;
-  prix.value = prix + " FCFA";
-  calcTotal();
+function choisir(p,pv){
+  prod.value=p;
+  prix=pv;
+  calcul();
 }
-
-function calcTotal(){
-  total.innerText = prixUnitaire * quantite.value;
+function calcul(){
+  total.innerText = prix*qte.value;
 }
-
-function payer(){
-  let montant = total.innerText;
-  let msg = `Paiement ${produit.value} - ${montant} FCFA`;
-  if(paiement.value==="Wave"){window.open(`https://pay.wave.com/SHOP_NAME?amount=${montant}&message=${msg}`);}
-  else{window.open(`https://orange-money.sn/paiement`);}
+function payerWave(){
+  if(total.innerText==0){alert("Choisissez un produit");return;}
+  let msg="Bonjour, je souhaite payer "+total.innerText+" FCFA pour une commande Fierté Africaine.";
+  window.open("https://wa.me/"+WAVE_NUMERO+"?text="+encodeURIComponent(msg));
 }
-
-const scriptURL = "TON_URL_APPS_SCRIPT";
-commandeForm.addEventListener("submit", e=>{
-  e.preventDefault();
-  fetch(scriptURL,{
+function confirmerPaiement(){
+  fetch(SCRIPT_URL,{
     method:"POST",
     body:JSON.stringify({
       nom:nom.value,
-      telephone:telephone.value,
-      produit:produit.value,
-      taille:taille.value,
-      couleur:couleur.value,
-      quantite:+quantite.value,
+      telephone:tel.value,
+      produit:prod.value,
+      quantite:qte.value,
       total:total.innerText,
-      paiement:paiement.value
+      paiement:"Wave Business"
     })
-  }).then(()=>{resultat.innerText="Commande enregistrée ✔️";commandeForm.reset();total.innerText="0";});
-});
-
-// Facture PDF
-function telechargerFacture(){
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-  doc.setFontSize(18);doc.text("FIERTE AFRICAINE",105,20,{align:"center"});
-  doc.setFontSize(14);doc.text("Facture de commande",105,30,{align:"center"});doc.line(20,35,190,35);
-  let y=45;doc.setFontSize(12);
-  doc.text(`Nom : ${nom.value}`,20,y);y+=8;
-  doc.text(`Téléphone : ${telephone.value}`,20,y);y+=8;
-  doc.text(`Produit : ${produit.value}`,20,y);y+=8;
-  doc.text(`Taille : ${taille.value}`,20,y);y+=8;
-  doc.text(`Couleur : ${couleur.value}`,20,y);y+=8;
-  doc.text(`Quantité : ${quantite.value}`,20,y);y+=8;
-  doc.text(`Total : ${total.innerText} FCFA`,20,y);y+=8;
-  doc.text(`Mode de paiement : ${paiement.value}`,20,y);y+=8;
-  doc.line(20,y+2,190,y+2);doc.text("Merci pour votre commande !",105,y+12,{align:"center"});
-  doc.save(`Facture_${nom.value}_${produit.value}.pdf`);
+  }).then(()=>{
+    paiementOK=true;
+    factureBtn.disabled=false;
+    resultat.innerText="Paiement confirmé ✔️ Commande enregistrée";
+  });
+}
+function facture(){
+  if(!paiementOK)return;
+  const {jsPDF}=window.jspdf;
+  const d=new jsPDF();
+  d.text("FIERTE AFRICAINE",105,20,{align:"center"});
+  d.text(`Nom : ${nom.value}`,20,40);
+  d.text(`Produit : ${prod.value}`,20,50);
+  d.text(`Total : ${total.innerText} FCFA`,20,60);
+  d.save("facture_fierte_africaine.pdf");
 }
 </script>
+
 </body>
 </html>
