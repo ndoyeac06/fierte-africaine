@@ -18,26 +18,53 @@ nav a{color:var(--beige);margin-left:20px;text-decoration:none;font-weight:bold}
 section{display:none;padding:40px;max-width:1100px;margin:auto}
 section.active{display:block}
 h1,h2{color:var(--marron)}
-.produits{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:25px;margin-bottom:30px}
-.produit{background:white;border-radius:18px;padding:15px;text-align:center;box-shadow:0 8px 20px rgba(0,0,0,.08);cursor:pointer;transition:0.3s}
-.produit:hover{transform:scale(1.03)}
-/* ===== Correction pour images visibles entièrement ===== */
-.produit img{
-  width:100%;
-  height:auto;            /* Hauteur automatique selon l'image */
-  max-height:400px;       /* Limite la hauteur pour la mise en page */
-  object-fit:contain;     /* Affiche l’image entière sans la couper */
-  border-radius:15px;
-  background:#f5f0e6;     /* Couleur de fond pour les espaces vides */
-}
-.prix{font-weight:bold;color:var(--marron);margin-top:8px}
-form{background:white;padding:25px;border-radius:18px;max-width:500px}
+form{background:white;padding:25px;border-radius:18px;max-width:500px;margin-top:30px}
 input,select,textarea,button{width:100%;padding:12px;margin-bottom:12px;border-radius:8px;border:1px solid #ccc}
 button{background:var(--marron);color:white;font-weight:bold;border:none;cursor:pointer}
 .whatsapp{position:fixed;bottom:20px;right:20px;background:#25D366;color:white;padding:12px 20px;border-radius:30px;text-decoration:none;font-weight:bold}
+
+/* ===== Boutique Pro : grande image + miniatures ===== */
+.produit-container{
+  border-radius:18px;
+  background:white;
+  padding:15px;
+  box-shadow:0 8px 20px rgba(0,0,0,.08);
+  text-align:center;
+  margin-bottom:30px;
+}
+
+.main-image{
+  width:100%;
+  max-height:350px;
+  object-fit:contain;
+  border-radius:15px;
+  background:#f5f0e6;
+  margin-bottom:10px;
+}
+
+.thumbnails{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  overflow-x:auto;
+  padding-bottom:5px;
+}
+
+.thumbnails img{
+  width:80px;
+  height:80px;
+  object-fit:contain;
+  border-radius:10px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.thumbnails img:hover{
+  transform:scale(1.2);
+  box-shadow:0 8px 20px rgba(0,0,0,0.3);
+}
 </style>
 </head>
-
 <body>
 
 <header>
@@ -55,10 +82,6 @@ button{background:var(--marron);color:white;font-weight:bold;border:none;cursor:
 <section id="home" class="active">
   <h1>Bienvenue chez Fierté Africaine</h1>
   <p>La mode qui célèbre l’identité africaine.</p>
-  <div class="photos">
-    <div class="produit"><img src="shooting.jpeg" alt="Présentation"></div>
-    <div class="produit"><img src="jeune homme.jpeg" alt="Présentation"></div>
-  </div>
 </section>
 
 <!-- ===== BOUTIQUE ===== -->
@@ -67,16 +90,30 @@ button{background:var(--marron);color:white;font-weight:bold;border:none;cursor:
 
 <div class="produits">
 
-  <div class="produit" onclick="selectProduit('Tee-shirt',8000)">
-    <img src="shooting.jpeg" alt="Tee-shirt">
+  <!-- Produit Tee-shirt -->
+  <div class="produit-container">
     <h3>Tee-shirt Fierté Africaine</h3>
+    <img id="main-tee" src="shooting.jpeg" class="main-image">
+    <div class="thumbnails">
+      <img src="shooting.jpeg" onclick="document.getElementById('main-tee').src=this.src">
+      <img src="shooting2.jpeg" onclick="document.getElementById('main-tee').src=this.src">
+      <img src="shooting3.jpeg" onclick="document.getElementById('main-tee').src=this.src">
+    </div>
     <p class="prix">8 000 FCFA</p>
+    <button onclick="selectProduit('Tee-shirt',8000)">Choisir ce produit</button>
   </div>
 
-  <div class="produit" onclick="selectProduit('Pull',8000)">
-    <img src="pull marron.jpeg" alt="Pull">
+  <!-- Produit Pull -->
+  <div class="produit-container">
     <h3>Pull Fierté Africaine</h3>
+    <img id="main-pull" src="pull marron.jpeg" class="main-image">
+    <div class="thumbnails">
+      <img src="pull marron.jpeg" onclick="document.getElementById('main-pull').src=this.src">
+      <img src="pull2.jpeg" onclick="document.getElementById('main-pull').src=this.src">
+      <img src="pull3.jpeg" onclick="document.getElementById('main-pull').src=this.src">
+    </div>
     <p class="prix">8 000 FCFA</p>
+    <button onclick="selectProduit('Pull',8000)">Choisir ce produit</button>
   </div>
 
 </div>
@@ -84,28 +121,21 @@ button{background:var(--marron);color:white;font-weight:bold;border:none;cursor:
 <form id="commandeForm">
   <input id="nom" placeholder="Nom complet" required>
   <input id="telephone" placeholder="Téléphone" required>
-
   <input id="produit" readonly placeholder="Produit choisi">
   <input id="prix" readonly placeholder="Prix">
-
   <select id="taille">
     <option>S</option><option>M</option><option>L</option><option>XL</option>
   </select>
-
   <input id="couleur" placeholder="Couleur">
   <input type="number" id="quantite" value="1" min="1" onchange="calcTotal()">
-
   <p><b>Total : <span id="total">0</span> FCFA</b></p>
-
   <select id="paiement">
     <option>Wave</option>
     <option>Orange Money</option>
   </select>
-
   <button type="button" onclick="payer()">Payer maintenant</button>
   <button type="submit">Valider la commande</button>
   <button type="button" onclick="telechargerFacture()">Télécharger la facture PDF</button>
-
   <p id="resultat"></p>
 </form>
 </section>
@@ -138,8 +168,7 @@ function calcTotal(){
 function payer(){
   let montant = total.innerText;
   let msg = `Paiement ${produit.value} - ${montant} FCFA`;
-
-  if(paiement.value === "Wave"){
+  if(paiement.value==="Wave"){
     window.open(`https://pay.wave.com/SHOP_NAME?amount=${montant}&message=${msg}`);
   } else {
     window.open(`https://orange-money.sn/paiement`);
@@ -147,7 +176,7 @@ function payer(){
 }
 
 // Envoi commande vers Google Sheet
-const scriptURL = "https://script.google.com/macros/s/AKfycbzfUECnB0Dm1VqwHtRYaDFTXKOFEj01TEmeRt1Br56X8viA0GBHfefhDfzvoeWBDBfE/exec";
+const scriptURL = "TON_URL_APPS_SCRIPT";
 commandeForm.addEventListener("submit", e=>{
   e.preventDefault();
   fetch(scriptURL,{
@@ -169,33 +198,29 @@ commandeForm.addEventListener("submit", e=>{
   });
 });
 
-// Génération de facture PDF
+// Facture PDF
 function telechargerFacture(){
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
   doc.setFontSize(18);
-  doc.text("FIERTE AFRICAINE", 105, 20, {align:"center"});
+  doc.text("FIERTE AFRICAINE",105,20,{align:"center"});
   doc.setFontSize(14);
-  doc.text("Facture de commande", 105, 30, {align:"center"});
-  doc.setLineWidth(0.5);
+  doc.text("Facture de commande",105,30,{align:"center"});
   doc.line(20,35,190,35);
-
-  let y = 45;
+  let y=45;
   doc.setFontSize(12);
-  doc.text(`Nom : ${nom.value}`, 20, y); y+=8;
-  doc.text(`Téléphone : ${telephone.value}`, 20, y); y+=8;
-  doc.text(`Produit : ${produit.value}`, 20, y); y+=8;
-  doc.text(`Taille : ${taille.value}`, 20, y); y+=8;
-  doc.text(`Couleur : ${couleur.value}`, 20, y); y+=8;
-  doc.text(`Quantité : ${quantite.value}`, 20, y); y+=8;
-  doc.text(`Total : ${total.innerText} FCFA`, 20, y); y+=8;
-  doc.text(`Mode de paiement : ${paiement.value}`, 20, y); y+=8;
-
+  doc.text(`Nom : ${nom.value}`,20,y);y+=8;
+  doc.text(`Téléphone : ${telephone.value}`,20,y);y+=8;
+  doc.text(`Produit : ${produit.value}`,20,y);y+=8;
+  doc.text(`Taille : ${taille.value}`,20,y);y+=8;
+  doc.text(`Couleur : ${couleur.value}`,20,y);y+=8;
+  doc.text(`Quantité : ${quantite.value}`,20,y);y+=8;
+  doc.text(`Total : ${total.innerText} FCFA`,20,y);y+=8;
+  doc.text(`Mode de paiement : ${paiement.value}`,20,y);y+=8;
   doc.line(20,y+2,190,y+2);
-  doc.text("Merci pour votre commande !", 105, y+12, {align:"center"});
+  doc.text("Merci pour votre commande !",105,y+12,{align:"center"});
   doc.save(`Facture_${nom.value}_${produit.value}.pdf`);
 }
 </script>
-
 </body>
 </html>
