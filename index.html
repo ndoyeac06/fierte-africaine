@@ -1,4 +1,4 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -21,7 +21,15 @@ h1,h2{color:var(--marron)}
 .produits{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:25px;margin-bottom:30px}
 .produit{background:white;border-radius:18px;padding:15px;text-align:center;box-shadow:0 8px 20px rgba(0,0,0,.08);cursor:pointer;transition:0.3s}
 .produit:hover{transform:scale(1.03)}
-.produit img{width:100%;height:220px;object-fit:cover;border-radius:15px}
+/* ===== Correction pour images visibles entièrement ===== */
+.produit img{
+  width:100%;
+  height:auto;            /* Hauteur automatique selon l'image */
+  max-height:400px;       /* Limite la hauteur pour la mise en page */
+  object-fit:contain;     /* Affiche l’image entière sans la couper */
+  border-radius:15px;
+  background:#f5f0e6;     /* Couleur de fond pour les espaces vides */
+}
 .prix{font-weight:bold;color:var(--marron);margin-top:8px}
 form{background:white;padding:25px;border-radius:18px;max-width:500px}
 input,select,textarea,button{width:100%;padding:12px;margin-bottom:12px;border-radius:8px;border:1px solid #ccc}
@@ -59,13 +67,13 @@ button{background:var(--marron);color:white;font-weight:bold;border:none;cursor:
 
 <div class="produits">
 
-  <div class="produit" onclick="selectProduit('Tee-shirt',5000)">
+  <div class="produit" onclick="selectProduit('Tee-shirt',8000)">
     <img src="shooting.jpeg" alt="Tee-shirt">
     <h3>Tee-shirt Fierté Africaine</h3>
     <p class="prix">8 000 FCFA</p>
   </div>
 
-  <div class="produit" onclick="selectProduit('Pull',10000)">
+  <div class="produit" onclick="selectProduit('Pull',8000)">
     <img src="pull marron.jpeg" alt="Pull">
     <h3>Pull Fierté Africaine</h3>
     <p class="prix">8 000 FCFA</p>
