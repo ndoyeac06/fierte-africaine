@@ -248,7 +248,7 @@ footer{
     <img src="jeune homme.jpeg" onclick="document.getElementById('main-pull').src=this.src">
   </div>
 
-  <p><b>8 000 FCFA</b></p>
+  <p><b>12 000 FCFA</b></p>
   <button onclick="choisir('Pull',12000)">Choisir ce produit</button>
 </div>
 
@@ -278,8 +278,7 @@ footer{
 </footer>
 
 <script>
-const WAVE_NUMERO="221783000823";
-const SCRIPT_URL="https://script.google.com/macros/s/AKfycbwaYSQmGpcqFlCit1cHKi_OA7EQIT1uapikjmSgzbMYcb5iR4B4XWGLEN9IKu3C-FZW/exec";
+const WAVE_LINK="https://pay.wave.com/m/M_sn_HSbhSDDjenFD/c/sn/";
 
 let prix=0;
 let paiementOK=false;
@@ -288,25 +287,32 @@ function entrerSite(){
   welcome.style.opacity=0;
   setTimeout(()=>{welcome.style.display="none";show("home")},800);
 }
+
 function show(id){
   document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
   document.getElementById(id).classList.add("active");
 }
+
 function choisir(p,pv){
   prod.value=p;
   prix=pv;
   calcul();
 }
+
 function calcul(){
   total.innerText = prix*qte.value;
 }
+
+// Payer via Wave (avec ton lien officiel)
 function payerWave(){
   if(total.innerText==0){alert("Choisissez un produit");return;}
-  let msg="Bonjour, je souhaite payer "+total.innerText+" FCFA pour une commande Fierté Africaine.";
-  window.open("https://wa.me/"+WAVE_NUMERO+"?text="+encodeURIComponent(msg));
+  // On ouvre le lien Wave dans un nouvel onglet
+  window.open(WAVE_LINK,"_blank");
 }
+
+// Confirmer le paiement
 function confirmerPaiement(){
-  fetch(SCRIPT_URL,{
+  fetch("https://script.google.com/macros/s/AKfycbwaYSQmGpcqFlCit1cHKi_OA7EQIT1uapikjmSgzbMYcb5iR4B4XWGLEN9IKu3C-FZW/exec",{
     method:"POST",
     body:JSON.stringify({
       nom:nom.value,
@@ -322,6 +328,8 @@ function confirmerPaiement(){
     resultat.innerText="Paiement confirmé ✔️ Commande enregistrée";
   });
 }
+
+// Générer la facture PDF
 function facture(){
   if(!paiementOK)return;
   const {jsPDF}=window.jspdf;
@@ -329,7 +337,8 @@ function facture(){
   d.text("FIERTE AFRICAINE",105,20,{align:"center"});
   d.text(`Nom : ${nom.value}`,20,40);
   d.text(`Produit : ${prod.value}`,20,50);
-  d.text(`Total : ${total.innerText} FCFA`,20,60);
+  d.text(`Quantité : ${qte.value}`,20,60);
+  d.text(`Total : ${total.innerText} FCFA`,20,70);
   d.save("facture_fierte_africaine.pdf");
 }
 </script>
