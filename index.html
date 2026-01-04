@@ -147,6 +147,7 @@ font-weight:bold
 <!-- PAGE DE BIENVENUE -->
 <section id="welcome" class="active">
 <div class="welcome">
+<img src="logo fa.jpeg" style="width:120px;height:120px;border-radius:50%;margin-bottom:20px">
 <h1>Bienvenue sur Fierté Africaine</h1>
 <p>Découvrez nos créations uniques et élégantes.</p>
 <button onclick="enterSite()">Entrer</button>
@@ -168,7 +169,6 @@ font-weight:bold
 <section id="home">
 <h1>Présentation</h1>
 
-<!-- TEXTE ORIGINAL DE PRÉSENTATION EN HAUT -->
 <p style="margin-top:10px; font-size:16px; color:#6b3e26; text-align:center;">
 Fierté Africaine est une marque dédiée à la qualité et à l’élégance de nos créations. Nous allions modernité et authenticité pour refléter votre identité avec style et distinction.
 </p>
@@ -222,33 +222,30 @@ Fierté Africaine est une marque dédiée à la qualité et à l’élégance de
 <section id="shop">
 <h2>Boutique</h2>
 
-<!-- Tee-shirt -->
 <div class="produit-container">
 <h3>Tee-shirt Fierté Africaine</h3>
 <img id="main-tee" src="shooting.jpeg" class="main-image">
 <div class="thumbnails">
 <img src="shooting.jpeg" onclick="main_tee.src=this.src">
 <img src="shooting1.jpeg" onclick="main_tee.src=this.src">
-<img src="shooting4.jpeg" onclick="main_tee.src=this.src">
+<img src="shooting3.jpeg" onclick="main_tee.src=this.src">
 </div>
 <p><b>8 000 FCFA</b></p>
 <button onclick="choisir('Tee-shirt',8000)">Choisir</button>
 </div>
 
-<!-- Pull -->
 <div class="produit-container">
 <h3>Pull Fierté Africaine</h3>
 <img id="main-pull" src="pull marron.jpeg" class="main-image">
 <div class="thumbnails">
 <img src="pull marron.jpeg" onclick="main_pull.src=this.src">
 <img src="WhatsApp Image 2026-01-03 at 19.53.30.jpeg" onclick="main_pull.src=this.src">
-<img src="mage WhatsApp 2026-01-04 à 12.49.2" onclick="main_pull.src=this.src">
+<img src="Image WhatsApp 2026-01-04 à 12." onclick="main_pull.src=this.src">
 </div>
 <p><b>8 000 FCFA</b></p>
 <button onclick="choisir('Pull',8000)">Choisir</button>
 </div>
 
-<!-- FORMULAIRE COMMANDE -->
 <form>
 <input id="nom" placeholder="Nom complet">
 <input id="tel" placeholder="Téléphone">
@@ -298,7 +295,7 @@ Fierté Africaine est une marque dédiée à la qualité et à l’élégance de
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-const SCRIPT_URL="https://script.google.com/macros/s/AKfycbzFa6RDV8A195rcOkVN8fAIZXI45DGnwtzsEYc0gC15AMxM3VxEger_1j2R326DP1w4/exec";
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbzdFy3dV7UyOm42Xak3lC5i02Ni22G6cXOpndNL3DaqHWJpvmyTG1cChvju_NCvkpvS/exec";
 
 let prix=0;
 let paiementOK=false;
@@ -306,7 +303,6 @@ let numeroCommande="";
 let statutPaiement="Wave";
 let etatCommande="En attente";
 
-// Récupération éléments DOM
 const nom = document.getElementById("nom");
 const tel = document.getElementById("tel");
 const prod = document.getElementById("prod");
