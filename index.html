@@ -44,6 +44,19 @@ border-radius:15px;
 background:#fff
 }
 
+figure{
+display:flex;
+flex-direction:column;
+align-items:center;
+}
+
+figcaption{
+font-size:14px;
+color:#6b3e26;
+margin-top:5px;
+text-align:center;
+}
+
 .produit-container{
 background:white;
 padding:15px;
@@ -134,16 +147,54 @@ color:var(--beige)
 <!-- SECTION PRÉSENTATION -->
 <section id="home" class="active">
 <h1>Présentation</h1>
-<div class="presentation">
-<img src="shooting.jpeg">
-<img src="shooting1.jpeg">
-<img src="shooting3.jpeg">
-<img src="machine.jpeg">
-<img src="kharitame.jpeg">
 
-<video src="video machine 1.mp4" controls></video>
-<video src="video machine 2.mp4" controls></video>
-<video src="video machine.mp4" controls></video>
+<!-- TEXTE ORIGINAL DE PRÉSENTATION EN HAUT -->
+<p style="margin-top:10px; font-size:16px; color:#6b3e26; text-align:center;">
+Fierté Africaine est une marque dédiée à la qualité et à l’élégance de nos créations. Nous allions modernité et authenticité pour refléter votre identité avec style et distinction.
+</p>
+
+<div class="presentation">
+
+<figure>
+  <img src="shooting.jpeg">
+  <figcaption>Photo shooting Tee-shirt</figcaption>
+</figure>
+
+<figure>
+  <img src="shooting1.jpeg">
+  <figcaption>Pull en atelier</figcaption>
+</figure>
+
+<figure>
+  <img src="shooting3.jpeg">
+  <figcaption>Modèle avec accessoire</figcaption>
+</figure>
+
+<figure>
+  <img src="machine.jpeg">
+  <figcaption>Machine de production</figcaption>
+</figure>
+
+<figure>
+  <img src="kharitame.jpeg">
+  <figcaption>Design Kharitame</figcaption>
+</figure>
+
+<figure>
+  <video src="video machine 1.mp4" controls></video>
+  <figcaption>Vidéo de production 1</figcaption>
+</figure>
+
+<figure>
+  <video src="video machine 2.mp4" controls></video>
+  <figcaption>Vidéo de production 2</figcaption>
+</figure>
+
+<figure>
+  <video src="video machine.mp4" controls></video>
+  <figcaption>Vidéo finale</figcaption>
+</figure>
+
 </div>
 </section>
 
@@ -226,100 +277,108 @@ color:var(--beige)
 <footer>© 2026 Fierté Africaine</footer>
 
 <script>
-const PRIX=8000;
-const SCRIPT_URL="https://script.google.com/macros/s/AKfycbwB2G_GtakGvZkAgiKW6I4pflelYUMWHhX-DV8D-hJbdIIz_bhb0PSkC-5ZX9psInzC/exec";
-
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbzFa6RDV8A195rcOkVN8fAIZXI45DGnwtzsEYc0gC15AMxM3VxEger_1j2R326DP1w4/exec";
+let prix=0;
 let paiementOK=false;
 let numeroCommande="";
 let statutPaiement="Wave";
 let etatCommande="En attente";
 
+// Initialisation produit vide
+prod.value="";
+
 function show(id){
-document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
-document.getElementById(id).classList.add("active");
+  document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
 }
 
 function choisir(p,pv){
-prod.value=p;
-prix=pv;
-calcul();
+  prod.value=p;
+  prix=pv;
+  calcul();
 }
 
 function calcul(){
-total.innerText=prix*qte.value;
+  total.innerText = (prix || 0) * qte.value;
 }
 
 function payerWave(){
-window.open("https://pay.wave.com/m/M_sn_HSbhSDDjenFD/c/sn/","_blank");
+  window.open("https://pay.wave.com/m/M_sn_HSbhSDDjenFD/c/sn/","_blank");
 }
 
 function genererNumeroCommande(){
-const d=new Date();
-numeroCommande="FA-"+d.getFullYear()+"-"+d.getTime().toString().slice(-5);
+  const d = new Date();
+  numeroCommande = "FA-" + d.getFullYear() + "-" + d.getTime().toString().slice(-5);
 }
 
 async function lireEtatCommandeDepuisSheet(){
-const r = await fetch(SCRIPT_URL + "?commande=" + numeroCommande);
-etatCommande = await r.text();
+  const r = await fetch(SCRIPT_URL + "?commande=" + numeroCommande);
+  etatCommande = await r.text();
 }
 
 async function confirmerPaiement(){
-if(!nom.value || !tel.value){
-alert("Veuillez remplir vos informations");
-return;
-}
-genererNumeroCommande();
+  if(!nom.value || !tel.value){
+    alert("Veuillez remplir vos informations");
+    return;
+  }
+  if(!prod.value){
+    alert("Veuillez sélectionner un produit !");
+    return;
+  }
 
-fetch(SCRIPT_URL,{
-method:"POST",
-body:JSON.stringify({
-commande:numeroCommande,
-nom:nom.value,
-telephone:tel.value,
-produit:prod.value,
-quantite:qte.value,
-total:total.innerText,
-statutPaiement:statutPaiement
-})
-}).then(r=>{
-if(!r.ok){alert("Erreur");return;}
+  genererNumeroCommande();
 
-paiementOK = true;
-statutPaiement="Payée (Wave)";
-factureBtn.disabled = false;
-resultat.innerText = "Commande enregistrée ✔️";
+  fetch(SCRIPT_URL,{
+    method:"POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({
+      commande: numeroCommande,
+      nom: nom.value,
+      telephone: tel.value,
+      produit: prod.value,
+      quantite: qte.value,
+      total: total.innerText,
+      statutPaiement: statutPaiement
+    })
+  }).then(r=>{
+    if(!r.ok){alert("Erreur enregistrement"); return;}
 
-envoyerWhatsAppAuto();
-});
+    paiementOK = true;
+    statutPaiement = "Payée (Wave)";
+    factureBtn.disabled = false;
+    resultat.innerText = "Commande enregistrée ✔️";
+
+    envoyerWhatsAppAuto();
+  });
 }
 
 async function facture(){
-if(!paiementOK)return;
+  if(!paiementOK) return;
 
-await lireEtatCommandeDepuisSheet();
+  await lireEtatCommandeDepuisSheet();
 
-const {jsPDF}=window.jspdf;
-const d=new jsPDF();
+  const {jsPDF}=window.jspdf;
+  const d = new jsPDF();
 
-d.text("FACTURE – FIERTE AFRICAINE",20,20);
-d.text(`Commande : ${numeroCommande}`,20,30);
-d.text(`État commande : ${etatCommande}`,20,40);
-d.text(`Statut paiement : ${statutPaiement}`,20,50);
-d.text(`Nom : ${nom.value}`,20,60);
-d.text(`Téléphone : ${tel.value}`,20,70);
-d.text(`Produit : ${prod.value}`,20,80);
-d.text(`Quantité : ${qte.value}`,20,90);
-d.text(`Total : ${total.innerText} FCFA`,20,105);
+  d.text("FACTURE – FIERTE AFRICAINE",20,20);
+  d.text(`Commande : ${numeroCommande}`,20,30);
+  d.text(`État commande : ${etatCommande}`,20,40);
+  d.text(`Statut paiement : ${statutPaiement}`,20,50);
+  d.text(`Nom : ${nom.value}`,20,60);
+  d.text(`Téléphone : ${tel.value}`,20,70);
+  d.text(`Produit : ${prod.value}`,20,80);
+  d.text(`Quantité : ${qte.value}`,20,90);
+  d.text(`Total : ${total.innerText} FCFA`,20,105);
 
-d.save("facture_fierte_africaine.pdf");
+  d.save("facture_fierte_africaine.pdf");
 }
 
 async function envoyerWhatsAppAuto(){
-await lireEtatCommandeDepuisSheet();
+  await lireEtatCommandeDepuisSheet();
 
-const numero=document.querySelector('input[name="wa"]:checked').value;
+  const numero = document.querySelector('input[name="wa"]:checked').value;
 
-let msg=
+  let msg =
 `FACTURE FIERTE AFRICAINE
 Commande : ${numeroCommande}
 État commande : ${etatCommande}
@@ -330,7 +389,7 @@ Produit : ${prod.value}
 Quantité : ${qte.value}
 Total : ${total.innerText} FCFA`;
 
-window.open("https://wa.me/221"+numero+"?text="+encodeURIComponent(msg),"_blank");
+  window.open("https://wa.me/221"+numero+"?text="+encodeURIComponent(msg),"_blank");
 }
 </script>
 
