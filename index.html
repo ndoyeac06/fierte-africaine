@@ -110,6 +110,24 @@ cursor:pointer
 
 button:disabled{background:#aaa}
 
+.welcome{
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+height:100vh;
+text-align:center;
+background:var(--beige);
+padding:20px;
+}
+
+footer{
+text-align:center;
+padding:15px;
+background:var(--marron);
+color:var(--beige)
+}
+
 .whatsapp{
 position:fixed;
 bottom:20px;
@@ -121,17 +139,19 @@ border-radius:30px;
 text-decoration:none;
 font-weight:bold
 }
-
-footer{
-text-align:center;
-padding:15px;
-background:var(--marron);
-color:var(--beige)
-}
 </style>
 </head>
 
 <body>
+
+<!-- PAGE DE BIENVENUE -->
+<section id="welcome" class="active">
+<div class="welcome">
+<h1>Bienvenue sur Fierté Africaine</h1>
+<p>Découvrez nos créations uniques et élégantes.</p>
+<button onclick="enterSite()">Entrer</button>
+</div>
+</section>
 
 <header>
 <div class="logo">
@@ -145,7 +165,7 @@ color:var(--beige)
 </header>
 
 <!-- SECTION PRÉSENTATION -->
-<section id="home" class="active">
+<section id="home">
 <h1>Présentation</h1>
 
 <!-- TEXTE ORIGINAL DE PRÉSENTATION EN HAUT -->
@@ -162,17 +182,17 @@ Fierté Africaine est une marque dédiée à la qualité et à l’élégance de
 
 <figure>
   <img src="shooting1.jpeg">
-  <figcaption>chaque motif raconte une histoire , la tienne commence ici</figcaption>
+  <figcaption>chaque motif raconte une histoire, la tienne commence ici</figcaption>
 </figure>
 
 <figure>
   <img src="shooting3.jpeg">
-  <figcaption>fiére de nos racines</figcaption>
+  <figcaption>fière de nos racines</figcaption>
 </figure>
 
 <figure>
   <img src="machine.jpeg">
-  <figcaption>porte la culture , inspire le monde</figcaption>
+  <figcaption>porte la culture, inspire le monde</figcaption>
 </figure>
 
 <figure>
@@ -182,7 +202,7 @@ Fierté Africaine est une marque dédiée à la qualité et à l’élégance de
 
 <figure>
   <video src="video machine 1.mp4" controls></video>
-  <figcaption>Details qui font la difference</figcaption>
+  <figcaption>Détails qui font la différence</figcaption>
 </figure>
 
 <figure>
@@ -277,32 +297,47 @@ Fierté Africaine est une marque dédiée à la qualité et à l’élégance de
 <footer>© 2026 Fierté Africaine</footer>
 
 <script>
+document.addEventListener("DOMContentLoaded", function() {
 const SCRIPT_URL="https://script.google.com/macros/s/AKfycbzFa6RDV8A195rcOkVN8fAIZXI45DGnwtzsEYc0gC15AMxM3VxEger_1j2R326DP1w4/exec";
+
 let prix=0;
 let paiementOK=false;
 let numeroCommande="";
 let statutPaiement="Wave";
 let etatCommande="En attente";
 
-// Initialisation produit vide
+// Récupération éléments DOM
+const nom = document.getElementById("nom");
+const tel = document.getElementById("tel");
+const prod = document.getElementById("prod");
+const qte = document.getElementById("qte");
+const total = document.getElementById("total");
+const factureBtn = document.getElementById("factureBtn");
+const resultat = document.getElementById("resultat");
+
 prod.value="";
 
-function show(id){
-  document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
+window.enterSite = function(){
+  document.getElementById('welcome').style.display='none';
+  document.getElementById('home').style.display='block';
 }
 
-function choisir(p,pv){
+window.show = function(id){
+  document.querySelectorAll("section").forEach(s=>s.style.display='none');
+  document.getElementById(id).style.display='block';
+}
+
+window.choisir = function(p,pv){
   prod.value=p;
   prix=pv;
   calcul();
 }
 
-function calcul(){
+window.calcul = function(){
   total.innerText = (prix || 0) * qte.value;
 }
 
-function payerWave(){
+window.payerWave = function(){
   window.open("https://pay.wave.com/m/M_sn_HSbhSDDjenFD/c/sn/","_blank");
 }
 
@@ -312,11 +347,15 @@ function genererNumeroCommande(){
 }
 
 async function lireEtatCommandeDepuisSheet(){
-  const r = await fetch(SCRIPT_URL + "?commande=" + numeroCommande);
-  etatCommande = await r.text();
+  try {
+    const r = await fetch(SCRIPT_URL + "?commande=" + numeroCommande);
+    etatCommande = await r.text();
+  } catch(e) {
+    etatCommande = "Non défini";
+  }
 }
 
-async function confirmerPaiement(){
+window.confirmerPaiement = async function(){
   if(!nom.value || !tel.value){
     alert("Veuillez remplir vos informations");
     return;
@@ -328,20 +367,21 @@ async function confirmerPaiement(){
 
   genererNumeroCommande();
 
-  fetch(SCRIPT_URL,{
-    method:"POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify({
-      commande: numeroCommande,
-      nom: nom.value,
-      telephone: tel.value,
-      produit: prod.value,
-      quantite: qte.value,
-      total: total.innerText,
-      statutPaiement: statutPaiement
-    })
-  }).then(r=>{
-    if(!r.ok){alert("Erreur enregistrement"); return;}
+  try {
+    const r = await fetch(SCRIPT_URL,{
+      method:"POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({
+        commande: numeroCommande,
+        nom: nom.value,
+        telephone: tel.value,
+        produit: prod.value,
+        quantite: qte.value,
+        total: total.innerText,
+        statutPaiement: statutPaiement
+      })
+    });
+    if(!r.ok){ alert("Erreur enregistrement"); return; }
 
     paiementOK = true;
     statutPaiement = "Payée (Wave)";
@@ -349,17 +389,23 @@ async function confirmerPaiement(){
     resultat.innerText = "Commande enregistrée ✔️";
 
     envoyerWhatsAppAuto();
-  });
+  } catch(err) {
+    alert("Erreur réseau lors de l'envoi");
+    console.error(err);
+  }
 }
 
-async function facture(){
+window.facture = async function(){
   if(!paiementOK) return;
 
   await lireEtatCommandeDepuisSheet();
 
-  const {jsPDF}=window.jspdf;
-  const d = new jsPDF();
+  if(!window.jspdf || !window.jspdf.jsPDF){
+    alert("jsPDF non chargé correctement");
+    return;
+  }
 
+  const d = new window.jspdf.jsPDF();
   d.text("FACTURE – FIERTE AFRICAINE",20,20);
   d.text(`Commande : ${numeroCommande}`,20,30);
   d.text(`État commande : ${etatCommande}`,20,40);
@@ -373,13 +419,12 @@ async function facture(){
   d.save("facture_fierte_africaine.pdf");
 }
 
-async function envoyerWhatsAppAuto(){
+window.envoyerWhatsAppAuto = async function(){
   await lireEtatCommandeDepuisSheet();
 
   const numero = document.querySelector('input[name="wa"]:checked').value;
 
-  let msg =
-`FACTURE FIERTE AFRICAINE
+  let msg = `FACTURE FIERTE AFRICAINE
 Commande : ${numeroCommande}
 État commande : ${etatCommande}
 Statut paiement : ${statutPaiement}
@@ -391,6 +436,8 @@ Total : ${total.innerText} FCFA`;
 
   window.open("https://wa.me/221"+numero+"?text="+encodeURIComponent(msg),"_blank");
 }
+
+});
 </script>
 
 </body>
