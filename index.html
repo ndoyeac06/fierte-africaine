@@ -121,7 +121,7 @@ nav a{margin-left:0;margin-top:8px;}
   <div class="thumbnails">
     <img src="pull marron.jpeg" onclick="document.getElementById('main-pull').src=this.src">
     <img src="WhatsApp Image 2026-01-03 at 19.53.30.jpeg" onclick="document.getElementById('main-pull').src=this.src">
-    <img src="WhatsApp Image 2026-01-04 at 12.49.29.jpeg" onclick="document.getElementById('main-pull').src=this.src">
+    <img src="jeune homme.jpeg" onclick="document.getElementById('main-pull').src=this.src">
   </div>
   <p><b>8 000 FCFA</b></p>
   <button onclick="choisir('Pull',8000)">Choisir ce produit</button>
@@ -171,7 +171,6 @@ nav a{margin-left:0;margin-top:8px;}
 </section>
 
 <a class="whatsapp" href="https://wa.me/221783000823" target="_blank">WhatsApp</a>
-
 <footer>© 2026 Fierté Africaine. Tous droits réservés.</footer>
 
 <script>
@@ -182,10 +181,34 @@ function entrerSite(){welcome.style.opacity=0;setTimeout(()=>{welcome.style.disp
 function show(id){document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");}
 function choisir(p,pv){prod.value=p;prix=pv;calcul();}
 function calcul(){total.innerText = prix*qte.value;}
-function payerWave(){if(total.innerText==0){alert("Choisissez un produit");return;} if(livraison.value==="Oui"&&lieu.value.trim()===""){alert("Veuillez remplir le lieu de livraison");return;}window.open(WAVE_LINK,"_blank");}
 function toggleLieu(){document.getElementById("lieu").style.display=(livraison.value==="Oui")?"block":"none";}
-function confirmerPaiement(){if(livraison.value==="Oui"&&lieu.value.trim()===""){alert("Veuillez remplir le lieu de livraison");return;}fetch("https://script.google.com/macros/s/AKfycbwaYSQmGpcqFlCit1cHKi_OA7EQIT1uapikjmSgzbMYcb5iR4B4XWGLEN9IKu3C-FZW/exec",{method:"POST",body:JSON.stringify({nom:nom.value,telephone:tel.value,produit:prod.value,quantite:qte.value,taille:taille.value,couleur:couleur.value,livraison:livraison.value,lieu:lieu.value,total:total.innerText,paiement:"Wave Business"})}).then(()=>{paiementOK=true;factureBtn.disabled=false;resultat.innerText="Paiement confirmé ✔️ Commande enregistrée";});}
-function facture(){if(!paiementOK)return;const{jsPDF}=window.jspdf;const d=new jsPDF();d.text("FIERTE AFRICAINE",105,20,{align:"center"});d.text(`Nom : ${nom.value}`,20,40);d.text(`Produit : ${prod.value}`,20,50);d.text(`Quantité : ${qte.value}`,20,60);d.text(`Taille : ${taille.value}`,20,70);d.text(`Couleur : ${couleur.value}`,20,80);d.text(`Livraison : ${livraison.value}`,20,90);if(livraison.value==="Oui"){d.text(`Lieu : ${lieu.value}`,20,100);}d.text(`Total : ${total.innerText} FCFA`,20,110);d.save("facture_fierte_africaine.pdf");}
+function payerWave(){if(total.innerText==0){alert("Choisissez un produit");return;}if(livraison.value==="Oui"&&lieu.value.trim()===""){alert("Veuillez remplir le lieu de livraison");return;}window.open(WAVE_LINK,"_blank");}
+
+// Confirmation paiement et activation bouton facture
+function confirmerPaiement(){
+  if(!nom.value || !tel.value || !prod.value || !taille.value || !couleur.value){alert("Remplissez tous les champs du formulaire"); return;}
+  if(livraison.value==="Oui" && lieu.value.trim()===""){alert("Veuillez remplir le lieu de livraison"); return;}
+  paiementOK=true;
+  factureBtn.disabled=false;
+  resultat.innerText="Paiement confirmé ✔️ Commande enregistrée";
+}
+
+// Génération facture PDF
+function facture(){
+  if(!paiementOK){alert("Veuillez confirmer le paiement d'abord"); return;}
+  const {jsPDF}=window.jspdf;
+  const d=new jsPDF();
+  d.text("FIERTE AFRICAINE",105,20,{align:"center"});
+  d.text(`Nom : ${nom.value}`,20,40);
+  d.text(`Produit : ${prod.value}`,20,50);
+  d.text(`Quantité : ${qte.value}`,20,60);
+  d.text(`Taille : ${taille.value}`,20,70);
+  d.text(`Couleur : ${couleur.value}`,20,80);
+  d.text(`Livraison : ${livraison.value}`,20,90);
+  if(livraison.value==="Oui"){d.text(`Lieu : ${lieu.value}`,20,100);}
+  d.text(`Total : ${total.innerText} FCFA`,20,110);
+  d.save("facture_fierte_africaine.pdf");
+}
 </script>
 </body>
 </html>
