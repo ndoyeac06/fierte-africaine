@@ -141,13 +141,14 @@ button:disabled{background:#aaa}
 .thumbnails{
   display:flex;
   justify-content:center;
-  gap:10px
+  gap:10px;
+  overflow-x:auto;
 }
 .thumbnails img{
   width:80px;height:80px;
   object-fit:contain;
   border-radius:10px;
-  cursor:pointer
+  cursor:pointer;
 }
 
 /* FOOTER */
@@ -163,8 +164,7 @@ footer{
 @media (max-width:768px){
   .presentation{grid-template-columns:1fr;gap:15px;}
   .produits{grid-template-columns:1fr;}
-  .thumbnails{overflow-x:auto;justify-content:flex-start;gap:10px;}
-  .thumbnails img{flex-shrink:0;}
+  .thumbnails{justify-content:flex-start;gap:10px;}
   section{padding:120px 15px 100px;}
   form{padding:15px;}
   #welcome h1{font-size:30px;}
@@ -245,11 +245,11 @@ footer{
   <div class="thumbnails">
     <img src="pull marron.jpeg" onclick="document.getElementById('main-pull').src=this.src">
     <img src="WhatsApp Image 2026-01-03 at 19.53.30.jpeg" onclick="document.getElementById('main-pull').src=this.src">
-    <img src="WhatsApp Image 2026-01-04 at 12.49.29.jpeg" onclick="document.getElementById('main-pull').src=this.src">
+    <img src="jeune homme.jpeg" onclick="document.getElementById('main-pull').src=this.src">
   </div>
 
   <p><b>8 000 FCFA</b></p>
-  <button onclick="choisir('Pull',12000)">Choisir ce produit</button>
+  <button onclick="choisir('Pull',8000)">Choisir ce produit</button>
 </div>
 
 <!-- FORMULAIRE COMMANDE -->
@@ -303,10 +303,9 @@ function calcul(){
   total.innerText = prix*qte.value;
 }
 
-// Payer via Wave (avec ton lien officiel)
+// Payer via Wave (lien officiel)
 function payerWave(){
   if(total.innerText==0){alert("Choisissez un produit");return;}
-  // On ouvre le lien Wave dans un nouvel onglet
   window.open(WAVE_LINK,"_blank");
 }
 
